@@ -5,7 +5,9 @@ import re
 import urllib.parse
 import requests
 from time import sleep
-import flask
+import flask as Flask, render_template, request, send_from_directory
+from pytube import YouTube
+from pydub import AudioSegment
 
 # Function to remove non-alphabet characters from the title.
 def remove_non_alpha(s):

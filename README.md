@@ -5,8 +5,7 @@ This is a simple web application that allows users to convert YouTube videos to 
 ## Installation
 
 1. Clone the repository.
-2. Install the required packages using `pip install -r requirements.txt`.
-3. Run the app using `python app.py`.
+2. Run the app using `python app.py`.
 
 ## Usage
 

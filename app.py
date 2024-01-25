@@ -5,56 +5,79 @@ import re
 import urllib.parse
 import requests
 from time import sleep
-import flask as Flask, render_template, request, send_from_directory
+from flask import Flask, render_template, request, send_from_directory
 from pytube import YouTube
 from pydub import AudioSegment
+
+app = Flask(__name__)
 
 # Function to remove non-alphabet characters from the title.
 def remove_non_alpha(s):
     return re.sub(r"[^a-zA-Z\s]", '', s).replace(' ', '-')
 
-# Validating input url
-try:
-    video_url = input("Paste YouTube URL: ")
-    result = urllib.parse.urlparse(video_url)
-
-    # Check if the URL is valid and belongs to YouTube.com
-    if result.scheme == "https" and result.netloc == "www.youtube.com":
-        print("URL check... PASS")
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
         try:
-            yt = YouTube(video_url)
-        except:
-            print("Failed to read url. Retrying...")
-            sleep(2)
-            yt = YouTube(video_url)
-        raw_title = yt.title
-        title = remove_non_alpha(raw_title)
+            video_url = request.form['url']
+            result = urllib.parse.urlparse(video_url)
 
-        # Send a request to the URL and check if the video is available
-        response = requests.get(video_url)
-        if "Video unavailable" in response.text:
-            print("Video is not available on YouTube")
-            raise ValueError("Video is not available on YouTube")
-        else:
-            print(f"Title: {title}")
-            print("Gathering available streams...")
-            sleep(2)
+            # Check if the URL is valid and belongs to YouTube.com
+            if result.scheme == "https" and result.netloc == "www.youtube.com":
+                print("URL check... PASS")
+                try:
+                    yt = YouTube(video_url)
+                except:
+                    print("Failed to read URL. Retrying...")
+                    sleep(2)
+                    yt = YouTube(video_url)
 
-    else:
-        print("URL is not valid or does not belong to youtube.com")
-        raise ValueError("Invalid URL or URL does not belong to youtube.com")
+                raw_title = yt.title
+                title = remove_non_alpha(raw_title)
 
-    # Audio bitrate for 'audio_only' and merging video/audio above 1080p. Bitrate 160kbps can also be used for 2K and 4K videos.
-    audio_bitrate = '128kbps'
+                audio_bitrate = request.form['bitrate']
+                audio_format = request.form['format']
 
-    # This condition only handles downloading and uploading of audio-only file
-    if download_quality == 'audio':
-        audio_only = yt.streams.filter(abr=audio_bitrate).first()
-        print("Downloading audio-only file...")
-        audio_file = os.path.join(output_dir, f"{file_name}.m4a")
-        audio_only.download(output_path=output_dir, filename=f"{file_name}.m4a")
-        #audio_only.download() #(output_path=output_dir, filename=f"{file_name}.m4a")
+                # Getting list of all available streams for input url.
+                streams = yt.streams.filter(only_audio=True)
+                bitrates = set(stream.abr for stream in streams if stream and stream.abr)
+                formats = set(stream.mime_type.split('/')[1] for stream in streams if stream and stream.mime_type)
 
+                download_bitrate = request.form['bitrate']
+                download_format = request.form['format']
 
-except Exception as e:
-    print(f"An error occurred: {str(e)}")
+                file_name = f"{title}"
+                output_dir = os.getcwd()
+
+                selected_stream = yt.streams.filter(only_audio=True, abr=download_bitrate, mime_type=f'audio/{download_format}').first()
+
+                if selected_stream:
+                    print(f"Downloading audio stream with {download_bitrate} bitrate and {download_format} format...")
+                    audio_file = os.path.join(output_dir, f"{file_name}.{download_format}")
+
+                    # Downloading the audio stream
+                    selected_stream.download(output_path=output_dir, filename=f"{file_name}.{download_format}")
+
+                    # If the format is WAV, convert it to MP3
+                    if download_format == 'wav':
+                        audio = AudioSegment.from_wav(audio_file)
+                        audio.export(os.path.join(output_dir, f"{file_name}.mp3"), format="mp3")
+                        os.remove(audio_file)  # Remove the original WAV file
+                        audio_file = os.path.join(output_dir, f"{file_name}.mp3")
+
+                    return send_from_directory(directory=os.path.abspath(output_dir), filename=os.path.basename(audio_file), as_attachment=True)
+                else:
+                    print(f"No suitable audio stream found for {download_bitrate} bitrate and {download_format} format.")
+                    raise ValueError(f"No suitable audio stream found")
+
+            else:
+                print("URL is not valid or does not belong to youtube.com")
+                raise ValueError("Invalid URL or URL does not belong to youtube.com")
+
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+
+    return render_template('index.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)

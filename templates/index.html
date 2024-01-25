@@ -1,32 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube to Audio Converter</title>
+    <title>YouTube to MP3 Converter</title>
 </head>
 <body>
-    <h1>YouTube to Audio Converter</h1>
-    <form method="post" action="/" enctype="multipart/form-data">
-        <label for="url">YouTube URL:</label>
-        <input type="text" id="url" name="url" required>
-        <br>
-        <label for="bitrate">Audio Bitrate:</label>
-        <select id="bitrate" name="bitrate" required>
-            <option value="128kbps">128 kbps</option>
-            <option value="192kbps">192 kbps</option>
-            <option value="256kbps">256 kbps</option>
-            <option value="320kbps">320 kbps</option>
-        </select>
-        <br>
-        <label for="format">Audio Format:</label>
-        <select id="format" name="format" required>
-            <option value="mp3">MP3</option>
-            <option value="wav">WAV</option>
-        </select>
-        <br>
-        <button type="submit">Download</button>
+    <h1>YouTube to MP3 Converter</h1>
+    <form method="POST" action="/download">
+        <input type="text" name="url" placeholder="Enter YouTube video URL">
+        <button type="submit">Convert</button>
     </form>
 </body>
 </html>

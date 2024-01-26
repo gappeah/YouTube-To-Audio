@@ -15,7 +15,7 @@ def download():
     audio = yt.streams.filter(only_audio=True).first()
     out_file = audio.download()
     base, ext = os.path.splitext(out_file)
-    new_file = base + '.mp3'
+    new_file = base + '.m4a'
     os.rename(out_file, new_file)
     return send_file(new_file, as_attachment=True)
 

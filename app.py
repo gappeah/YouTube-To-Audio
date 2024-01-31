@@ -13,6 +13,20 @@ def about():
     return render_template('about.html')
 
 
+@app.route('/templates/contact')
+def contact():
+    return render_template('contact.html')
+
+
+@app.route('/templates/privacy')
+def privacy():
+    return render_template('privacy.html')
+
+
+@app.route('/templates/terms')
+def terms():
+    return render_template('terms.html')
+
 
 @app.route('/download', methods=['POST'])
 def download():

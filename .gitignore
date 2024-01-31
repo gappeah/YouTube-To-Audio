@@ -2,6 +2,7 @@
 
 *.mp4
 *.mp3
+*.m4a
 # Ignore Python cache files
 __pycache__/
 *.pyc

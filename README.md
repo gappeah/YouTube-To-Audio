@@ -1,4 +1,4 @@
-# YouTube to MP3 Converter
+# YouTube to Audio
 
 This is a simple web application that allows users to convert YouTube videos to MP3 audio files.
 

@@ -1,3 +1,5 @@
+# Ignore .mp4 and .mp3 files
+
 *.mp4
 *.mp3
 # Ignore Python cache files

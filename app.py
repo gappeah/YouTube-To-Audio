@@ -8,6 +8,12 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+@app.route('/templates/about')
+def about():
+    return render_template('about.html')
+
+
+
 @app.route('/download', methods=['POST'])
 def download():
     url = request.form['url']

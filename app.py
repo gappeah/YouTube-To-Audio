@@ -1,43 +1,68 @@
-from flask import Flask, render_template, request, send_file
-import pytube
+import requests
+from pytube import YouTube
 import os
-
-app = Flask(__name__)
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/templates/about')
-def about():
-    return render_template('about.html')
+import moviepy
+from pydub import AudioSegment
+import re
+import urllib.parse
+from time import sleep
 
 
-@app.route('/templates/contact')
-def contact():
-    return render_template('contact.html')
+# Function to remove non-alphabet characters from the title.
+def remove_non_alpha(s):
+    return re.sub(r"[^a-zA-Z\s]", '', s).replace(' ', '-')
 
+# Validating input url
+try:
+    video_url = input("Paste YouTube URL: ")
+    result = urllib.parse.urlparse(video_url)
 
-@app.route('/templates/privacy')
-def privacy():
-    return render_template('privacy.html')
+    # Check if the URL is valid and belongs to YouTube.com
+    if result.scheme == "https" and result.netloc == "www.youtube.com":
+        print("URL check... PASS")
+        try:
+            yt = YouTube(video_url)
+        except:
+            print("Failed to read url. Retrying...")
+            sleep(2)
+            yt = YouTube(video_url)
+        raw_title = yt.title
+        title = remove_non_alpha(raw_title)
 
+        # Send a request to the URL and check if the video is available
+        response = requests.get(video_url)
+        if "Video unavailable" in response.text:
+            print("Video is not available on YouTube")
+            raise ValueError("Video is not available on YouTube")
+        else:
+            print(f"Title: {title}")
+            print("Gathering available streams...")
+            sleep(2)
 
-@app.route('/templates/terms')
-def terms():
-    return render_template('terms.html')
+    else:
+        print("URL is not valid or does not belong to youtube.com")
+        raise ValueError("Invalid URL or URL does not belong to youtube.com")
 
+      # Downloading the audio stream
+                audio_stream.download(output_path=os.getcwd(), filename=f"{title}.mp4")
 
-@app.route('/download', methods=['POST'])
-def download():
-    url = request.form['url']
-    yt = pytube.YouTube(url)
-    audio = yt.streams.filter(only_audio=True).first()
-    out_file = audio.download()
-    base, ext = os.path.splitext(out_file)
-    new_file = base + '.m4a'
-    os.rename(out_file, new_file)
-    return send_file(new_file, as_attachment=True)
+                # Convert the downloaded audio to MP3
+                audio = AudioSegment.from_file(audio_file, format='mp4')
+                mp3_file = os.path.join(os.getcwd(), f"{title}.mp3")
+                audio.export(mp3_file, format='mp3')
 
-if __name__ == '__main__':
-    app.run(debug=True)
+                # Clean up - remove the original MP4 audio file
+                os.remove(audio_file)
+
+                return mp3_file
+
+            else:
+                print(f"No audio stream found for {bitrate}kbps bitrate.")
+                raise ValueError(f"No audio stream found")
+
+    else:
+        print("URL is not valid or does not belong to youtube.com")
+        raise ValueError("Invalid URL or URL does not belong to youtube.com")
+
+except Exception as e:
+        print(f"An error occurred: {str(e)}")

@@ -6,8 +6,6 @@ import re
 import urllib.parse
 from time import sleep
 
-
-
 # Function to remove non-alphabet characters from the title.
 def remove_non_alpha(s):
     return re.sub(r"[^a-zA-Z\s]", '', s).replace(' ', '-')
@@ -18,7 +16,7 @@ try:
     result = urllib.parse.urlparse(video_url)
 
     # Check if the URL is valid and belongs to YouTube.com
-    if result.scheme == "https" and result.netloc == "www.youtube.com":
+    if result.scheme == "https" and result.netloc == "www.youtube.com" or "youtu.be" :
         print("URL check... PASS")
         try:
             yt = YouTube(video_url)
@@ -45,9 +43,9 @@ try:
             audio_stream.download(output_path=os.getcwd(), filename=f"{title}.mp4")
 
             # Convert the downloaded audio to MP3
-            audio = AudioSegment.from_file(audio_file, format='mp4')
+            audio = AudioSegment.from_file(os.path.abspath(audio_file), format='mp4')
             mp3_file = os.path.join(os.getcwd(), f"{title}.mp3")
-            audio.export(mp3_file, format='mp3')
+            audio.export(os.path.abspath(mp3_file), format='mp3', bitrate='320k')
 
             # Clean up - remove the original MP4 audio file
             os.remove(audio_file)

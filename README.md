@@ -25,7 +25,7 @@ This Python script allows you to download audio from YouTube videos and convert 
 
 **Updates:**
 * Direct MP4 to MP3 conversion has been achieved.
-* Both www.youtube.com" or "youtu.be" are accepted.
+* Both "www.youtube.com" or "youtu.be" are accepted.
 I hope this information helps you understand and use the code!
 
 

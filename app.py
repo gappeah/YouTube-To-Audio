@@ -42,11 +42,12 @@ try:
             audio_file = os.path.join(os.getcwd(), f"{title}.mp4")
             audio_stream.download(output_path=os.getcwd(), filename=f"{title}.mp4")
 
-            # Convert the downloaded audio to MP3
+            # Convert the downloaded audio to MP3 with a sample rate of 48000
             audio = AudioSegment.from_file(os.path.abspath(audio_file), format='mp4')
+            audio = audio.set_frame_rate(48000)  # Set sample rate to 48000
             mp3_file = os.path.join(os.getcwd(), f"{title}.mp3")
             audio.export(os.path.abspath(mp3_file), format='mp3', bitrate='320k')
-
+            
             # Clean up - remove the original MP4 audio file
             os.remove(audio_file)
 

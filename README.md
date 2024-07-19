@@ -1,4 +1,6 @@
 # YouTube-To-Audio
+![YouTube-to-Mp3](https://github.com/user-attachments/assets/625ae3b6-8d27-4710-9571-dbd4f38a6d4a)
+
 A subset of the [YouTube Downloader](https://github.com/gappeah/YouTube-Downloader-Pro) script. This Python script allows you to download audio from YouTube videos and convert them to MP3 format in 320 kbps.
 
 

@@ -10,6 +10,20 @@ from time import sleep
 def remove_non_alpha(s):
     return re.sub(r"[^a-zA-Z\s]", '', s).replace(' ', '-')
 
+# Function to get valid bitrate
+def get_bitrate():
+    bitrates = ["32", "96", "128", "192", "256", "320"]
+    print("Select the desired bitrate:")
+    for bitrate in bitrates:
+        print(f"{bitrate} kbps")
+    
+    selected_bitrate = input("Enter the desired bitrate (32, 96, 128, 192, 256, 320): ").strip()
+    
+    if selected_bitrate not in bitrates:
+        raise ValueError("Invalid bitrate selected. Please choose from 32, 96, 128, 192, 256, 320.")
+    
+    return selected_bitrate + "k"
+
 # Validating input url
 try:
     video_url = input("Paste YouTube URL: ")

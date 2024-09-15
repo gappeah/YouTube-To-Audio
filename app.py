@@ -5,6 +5,92 @@ from pydub import AudioSegment
 import re
 import urllib.parse
 from time import sleep
+import zipfile
+import shutil
+from io import BytesIO
+
+# URL for the ffmpeg zip file from GitHub
+FFMPEG_ZIP_URL = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip"
+
+# Function to download and extract ffmpeg executables
+# Function to find the bin folder dynamically after extraction
+def find_bin_folder(root_dir):
+    for root, dirs, files in os.walk(root_dir):
+        if 'bin' in dirs:
+            return os.path.join(root, 'bin')
+    return None
+
+# Function to download and extract ffmpeg executables
+def download_and_extract_ffmpeg():
+    # Directory where ffmpeg will be extracted
+    ffmpeg_dir = os.path.join(os.getcwd(), 'ffmpeg-master-latest-win64-gpl')
+    project_dir = os.getcwd()  # Your main project directory (YouTube-To-Audio folder)
+
+    # Define the final paths of the executables in the project directory
+    ffmpeg_exe = os.path.join(project_dir, 'ffmpeg.exe')
+    ffprobe_exe = os.path.join(project_dir, 'ffprobe.exe')
+    ffplay_exe = os.path.join(project_dir, 'ffplay.exe')
+
+    # Check if ffmpeg executables are already present in the project directory
+    if os.path.exists(ffmpeg_exe) and os.path.exists(ffprobe_exe) and os.path.exists(ffplay_exe):
+        print("ffmpeg executables already downloaded and extracted.")
+        return  # Exit the function as no further action is needed
+
+    try:
+        print("Downloading ffmpeg...")
+        response = requests.get(FFMPEG_ZIP_URL)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+
+        # Create a directory to extract ffmpeg if it doesn't exist
+        if not os.path.exists(ffmpeg_dir):
+            os.makedirs(ffmpeg_dir)
+
+        # Extract the zip file into the ffmpeg directory
+        with zipfile.ZipFile(BytesIO(response.content)) as zip_ref:
+            zip_ref.extractall(ffmpeg_dir)
+
+        print("ffmpeg download and extraction completed.")
+
+        # Find the bin directory dynamically (recursively search)
+        ffmpeg_bin_dir = find_bin_folder(ffmpeg_dir)
+
+        if ffmpeg_bin_dir is None:
+            raise FileNotFoundError("Bin folder not found after extraction")
+
+        print(f"Extracted contents in bin folder: {os.listdir(ffmpeg_bin_dir)}")  # Debug: Check if the bin folder exists
+
+        # Move the executables from 'bin' to the project folder
+        if os.path.exists(os.path.join(ffmpeg_bin_dir, 'ffmpeg.exe')):
+            shutil.move(os.path.join(ffmpeg_bin_dir, 'ffmpeg.exe'), ffmpeg_exe)
+            print("Moved ffmpeg.exe")
+        else:
+            print("ffmpeg.exe not found!")
+
+        if os.path.exists(os.path.join(ffmpeg_bin_dir, 'ffprobe.exe')):
+            shutil.move(os.path.join(ffmpeg_bin_dir, 'ffprobe.exe'), ffprobe_exe)
+            print("Moved ffprobe.exe")
+        else:
+            print("ffprobe.exe not found!")
+
+        if os.path.exists(os.path.join(ffmpeg_bin_dir, 'ffplay.exe')):
+            shutil.move(os.path.join(ffmpeg_bin_dir, 'ffplay.exe'), ffplay_exe)
+            print("Moved ffplay.exe")
+        else:
+            print("ffplay.exe not found!")
+
+        # Delete the extracted ffmpeg folder after moving the necessary files
+        shutil.rmtree(ffmpeg_dir)
+        print("Cleaned up the ffmpeg directory.")
+
+    except Exception as e:
+        print(f"Error during ffmpeg download or extraction: {str(e)}")
+        raise
+
+# Call this function at the beginning of your script
+download_and_extract_ffmpeg()
+
+# Set the path to ffmpeg in pydub
+AudioSegment.converter = os.path.join(os.getcwd(), "ffmpeg.exe")
 
 # Function to remove non-alphabet characters from the title.
 def remove_non_alpha(s):

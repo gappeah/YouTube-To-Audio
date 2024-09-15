@@ -35,3 +35,9 @@ A subset of the [YouTube Downloader](https://github.com/gappeah/YouTube-Download
 * Currently the script relies o an external executable, ffmpeg-master-latest-win64-gpl.zip, downloaded from GitHub. This zip file contains three applications: ffmpeg, ffprobe, and ffplay.
 
 Currently at the user is needs to manually download ffmpeg-master-latest-win64-gpl.zip, unzip it and place the three applications in the same directory as my Python script for it to function.Therefore the solution I need to implelement is to create a script that automatically downloads the three applications from ffmpeg-master-latest-win64-gpl.zip, and push down into the same directory. This way, the script could download or pre-install the executable within itself, eliminating the need for manual download and external file searching.
+
+* The directory structure of the extracted zip file has an extra nested folder (ffmpeg-master-latest-win64-gpl) inside the ffmpeg-master-latest-win64-gpl folder, which is causing the FileNotFoundError. This issue arises because the zip file may contain multiple levels of directories. The path it's looking for doesn't match the actual path of the extracted files due to these additional nested directories.
+
+The solution that was  implemented was we can ynamically handle the folder structure to ensure the correct bin directory is found, regardless of how deep it is nested.
+
+* Next implementation is to create Docker container to prevent the constant need to update pytube.

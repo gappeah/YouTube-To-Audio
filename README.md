@@ -32,3 +32,6 @@ A subset of the [YouTube Downloader](https://github.com/gappeah/YouTube-Download
 * Both www.youtube.com or youtu.be are accepted.
 * Added new standard sample rate 48 khz.
 * Added new bitrate options 32 kbit/s – generally acceptable only for speech, 96 kbit/s – generally used for speech or low-quality streaming, 128 kbit/s – mid-range bitrate quality, 192 kbit/s – medium-quality bitrate, 256 kbit/s – a commonly used high-quality bitrate and 320 kbit/s – highest level supported by the MP3 standard.
+* Currently the script relies o an external executable, ffmpeg-master-latest-win64-gpl.zip, downloaded from GitHub. This zip file contains three applications: ffmpeg, ffprobe, and ffplay.
+
+Currently at the user is needs to manually download ffmpeg-master-latest-win64-gpl.zip, unzip it and place the three applications in the same directory as my Python script for it to function.Therefore the solution I need to implelement is to create a script that automatically downloads the three applications from ffmpeg-master-latest-win64-gpl.zip, and push down into the same directory. This way, the script could download or pre-install the executable within itself, eliminating the need for manual download and external file searching.

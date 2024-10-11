@@ -3,9 +3,6 @@
 
 A subset of the [YouTube Downloader](https://github.com/gappeah/YouTube-Downloader-Pro) script. This Python script allows you to download audio from YouTube videos and convert them to MP3 format in 32 kbit/s, 96 kbit/s, 128 kbit/s, 192 kbit/s, 256 kbit/s and 320 kbit/s
 
-![image](https://github.com/user-attachments/assets/75a737b6-abe2-4374-8609-a5111e669e4c)
-
-
 **Features:**
 
 * Validates YouTube video URLs.
